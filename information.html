@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Information</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="fontawesome-free-5.15.3-web/css/all.min.css">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet">
+</head>
+<body>
+    <header class="header" data-header>
+        <div class="overlay" data-overlay></div>
+          
+            <div class="header-top">
+              <div class="container">
+                <a href="tel:+02223456790" class="helpline-box">
+                  <div class="icon-box">
+                    <ion-icon name="call-outline"></ion-icon>
+                  </div>
+                      <div class="wrapper">
+                        <p class="helpline-title">For Further Inquires :</p>
+                        <p class="helpline-number">+02 (223) 4567 90</p>
+                      </div>
+                </a>
+                    <a href="#" class="logo">
+                      <p class="logo">Global World Swimming & Camping</p>
+                    </a>
+                    <div class="header-btn-group">
+                      <div class="input-wrapper">
+                        <input class="input-field" type="text" id="search" name="search" placeholder="Type your search here">
+                    </div>
+                    <div>
+                      <button class="Search-btn" id="sib" aria-label="Search">
+                        <ion-icon name="search"></ion-icon>
+                      </button>
+                    </div> 
+                      <button class="nav-open-btn" aria-label="Open Menu" data-nav-open-btn>
+                        <ion-icon name="menu-outline"></ion-icon>
+                      </button>
+                    </div>
+                  </div>
+              </div>
+    
+                <div class="header-bottom">
+                  <div class="container">
+                    <nav class="navbar" data-navbar>
+                      <div class="navbar-top">
+                        <a href="#" class="logo">
+                          <p class="logo">Global World Swimming & Camping</p>
+                        </a>
+                        <button class="nav-close-btn" aria-label="Close Menu" data-nav-close-btn>
+                          <ion-icon name="close-outline"></ion-icon>
+                        </button>
+                      </div>
+                      <ul class="navbar-list">
+                        <li>
+                          <a href="home.html" class="navbar-link" data-nav-link>Home</a>
+                        </li>
+    
+                        <li>
+                          <a href="features.html" class="navbar-link" data-nav-link>Features</a>
+                        </li>
+    
+                        <li>
+                          <a href="local-attractions-page.html" class="navbar-link" data-nav-link>Local Attribution</a>
+                        </li>
+    
+                        <li>
+                          <a href="pitches.html" class="navbar-link" data-nav-link>Pitches</a>
+                        </li>
+    
+                        <li>
+                          <a href="reviews-page.html" class="navbar-link" data-nav-link>Review</a>
+                        </li>
+    
+                        <li>
+                         <a href="information.html" class="active" data-nav-link>Information</a>
+                        </li>
+    
+                        <li>
+                          <a href="contact-us-page.html" class="navbar-link" data-nav-link>Contact Us</a>
+                        </li>
+                        <?php if(isset($_SESSION['u_id'])) { ?>
+                          <a href="logout.html"><button class="btn btn-primary" id="logoutbtn" >Logout</button></a>
+                      <?php } else { ?>
+                          <button class="btn btn-primary" id="loginbtn" href="#">Login/Sign up</button>
+                      <?php } ?>
+                  </li>
+                  <?php
+                            if(isset($_SESSION['u_id'])){ ?>
+                              <p class="name-text"><?php echo $_SESSION['firstname'];
+                              } 
+                             ?>
+                              </p>
+                      </ul>
+                    </nav>
+              </div>
+            </div>
+      </header>
+              <!-- Login form-->
+    
+              <div class="login-form">
+                <form action=""method="POST">
+                    <button id="closeloginform"aria-label="Close Menu" data-nav-close-btn>
+                      <ion-icon name="close-outline"></ion-icon>
+                    </button>
+                    <div class="login-main">
+    
+                        <div class="form-content">
+                            <h1 class="loginhead"> <i class="fas fa-user"></i> User Login</h1>
+                            <?php if(isset($msg)) { ?>
+                              <div class="error"><?php echo $msg; ?></div>
+                          <?php } ?>
+                            <input type="username" placeholder="Username" name="username">
+                            <input type="password" placeholder="Password" name="password">
+                            <button class="lb">Login</button>
+                            <p class="s-link">Don't have an account?
+                            <a class="register" href="sign-up.html">Sign up </a>
+                          </p>
+                        </div>
+    
+                    </div>
+                </form>
+              </div>
+              <section class="ipitches" id="destination">
+                <div class="container">
+        
+                  <p class="section-subtitle">Pitches within Lusaka</p>
+        
+                  <h2 class="h2 section-title"> Our Pitches</h2>
+        
+                  <p class="section-text">
+                    All our pitches provide a comfortable and enjoyable camping experience. 
+            Whether you prefer the simplicity of tent camping or the convenience of caravans or motorhomes,
+            our campsites offer suitable pitches. Please note that availability may vary.
+                  </p>
+        
+                  <ul class="popular-list">
+                    <li>
+                      <div class="popular-card">
+                        <figure class="card-img">
+                          <img src="./assets/images/mh.jpg" alt="San miguel, italy" loading="lazy">
+                        </figure>
+        
+                        <div class="card-content">
+                          <p class="card-subtitle">
+                            <a href="#">Lusaka West</a>
+                          </p>
+        
+                          <h3 class="h3 card-title">
+                            <a href="#">Mori Motorhome</a>
+                          </h3>
+                         <a href="bs.html"><button class="btn btn-primary">Check availability</button></a>
+                        </div>
+        
+                      </div>
+                    </li>
+        
+                    <li>
+                      <div class="popular-card">
+        
+                        <figure class="card-img">
+                          <img src="./assets/images/te.jpg" alt="Burj khalifa, dubai" loading="lazy">
+                        </figure>
+        
+                        <div class="card-content">
+                          <p class="card-subtitle">
+                            <a href="#">Lilayi</a>
+                          </p>
+        
+                          <h3 class="h3 card-title">
+                            <a href="#">Eureka Tent pitch</a>
+                          </h3>
+                          <a href="bs.html"><button class="btn btn-primary">Check availability</button></a>
+                        </div>
+        
+                      </div>
+                    </li>
+        
+                    <li>
+                      <div class="popular-card">
+                        <figure class="card-img">
+                          <img src="./assets/images/cavan.jpg" alt="Kyoto temple, japan" loading="lazy">
+                        </figure>
+        
+                        <div class="card-content">
+        
+                          <p class="card-subtitle">
+                            <a href="#">RhodesPark</a>
+                          </p>
+        
+                          <h3 class="h3 card-title">
+                            <a href="#">Nkobo Caravan</a>
+                          </h3>
+                          <a href="bs.html"><button class="btn btn-primary">Check availability</button></a>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </section>
+              <h2 class="ntha">Booking form</h2>
+              <section class="pitch-booking" id="booking">
+                <div class="container">
+                  <form method="post" action="pitches.html">
+                    <?php if(isset($_GET['msg'])) { ?>
+                      <p class="msg"><?php echo $_GET['msg']; ?></p>
+                    <?php  } ?>
+                    <div class="pbs">
+                      <label for="site" class="label">Site</label>
+                      <select name="site" id="site" class="form-control">
+                        <option value="Adventure City">Adventure City</option>
+                        <option value="Kalimba Farms">Kalimba Farms</option>
+                        <option value="Monkey Pools">Monkey Pools</option>
+                      </select>
+                    </div>
+                    <div class="pbs">
+                      <label for="pitch" class="label">Pitch</label>
+                      <select name="pitch" id="pitch" class="form-control">
+                        <option value="Eureka Tent">Eureka Tent</option>
+                        <option value="Mori Motorhome">Mori Motorhome</option>
+                        <option value="Nkobo Caravan">Nkobo Caravan</option>
+                      </select>
+                    </div>
+                    <div class="pbs">
+                      <label for="people" class="label">Number of People</label>
+                      <input type="number" name="no_of_people" id="people" required placeholder="No.of People" min="1" class="form-control">
+                    </div>
+                    <div class="pbs">
+                      <label for="checkin" class="label">Check-in Date</label>
+                      <input type="date" name="check_in_date" id="checkin" required class="form-control">
+                    </div>
+                    <div class="pbs">
+                      <label for="checkout" class="label">Check-out Date</label>
+                      <input type="date" name="check_out_date" id="checkout" required class="form-control">
+                    </div>
+                    <?php
+                    if (isset($_SESSION['u_id']) || isset($_SESSION['user_name'])) {
+                      echo '
+                      <button type="submit" name="book" class="btn btn-primary">Submit</button>
+                      ';
+                  } else {
+                      echo '<p class="ntha">You must<a href="sign-up.html"> sign up </a> to create a booking.</p>';
+                  }
+                  ?>
+                  </form>
+                </div>
+              </section>
+              <!--Features of our campsites-->
+          
+          <h2 class="ntha">Features</h2>
+          <section class="featurecontainer">
+            <a href="../Ourproducts/Ourproducts.html#Earrings" class="ftctn">
+                <img src="assets/images/free-wifi-1563024_1920.jpg" alt="">
+                <p class="featuretitle"></p>
+            </a>
+            <a href="../Ourproducts/Ourproducts.html#Brooches" class="ftctn">
+                <img src="assets/images/park.jpg" alt="">
+                <p class="festuretitle">Safe Parking</p>
+            </a>
+            <a href="../Ourproducts/Ourproducts.html#Bangles" class="ftctn">
+                <img src="assets/images/relaxing-3112750_1920.jpg" alt="">
+                <p class="featuretitle">Swimming Session</p>
+            </a>
+            <a href="" class="ftctn">
+                <img src="assets/images/restaurant-1837150_1920.jpg" alt="">
+                <p class="featuretitle">Restruant</p>
+            </a>
+            <a href="../JbGallery/Slides.html" class="ftctn">
+              <img src="assets/images/gt.jpg" alt="">
+              <p class="featuretitle">Guided tour</p>
+          </a>
+            <a href="../JbGallery/Slides.html" class="ftctn">
+                <img src="assets/images/shower.jpg" alt="">
+                <p class="featuretitle">Showers</p>
+            </a>
+          </div>
+    </section>
+    <!--Location for all sites and pitches-->
+    <section class="location">
+      <h2 class="ntha">All our locations currently on the page are from Lusaka</h2>
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d246160.3357042442!2d28.178935774866343!3d-15.416769098543945!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1940f37d3cbcaa49%3A0xd0d093c1462013eb!2sLusaka!5e0!3m2!1sen!2szm!4v1683342164242!5m2!1sen!2szm" width="750" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </section>
+     <!--Near local attractions-->
+     <h2 class="ntha">Local attractions</h2>
+       <section class="nearby-attractions">
+          <div class="grid">
+            <div class="grid-row">
+                
+                <div class="col-4">
+                    <div class="features-img">
+                        <img src="assets/images/hiking.jpg" />
+                    </div>
+                    <div class="features-details">
+                        <h4>Mountain Hiking</h4>
+                        <p>Mountain hiking is a popular outdoor activity that involves trekking through mountainous terrain,
+                          typically on established trails or paths.
+                          Hiking in the mountains provides an opportunity to connect with nature, 
+                          get exercise, and challenge oneself physically and mentally.</p>
+                        
+                    </div>
+                    
+                </div>                    
+                
+                <div class="col-4">
+                    <div class="features-img">
+                        <img src="assets/images/restaurant-1837150_1920.jpg" />
+                    </div>
+                    <div class="features-details">
+                        <h4>Restruant</h4>
+                        <p>Monge Park is a public park located in San José, Costa Rica.
+                          It is a popular destination for locals and tourists alike due to its beautiful scenery and wide range of activities.
+                          The park features well-maintained walking trails, playgrounds, picnic areas, and a large pond with paddleboat rentals.
+                          
+                        </p>
+                        
+                    </div>
+    
+                </div>  
+                
+                <div class="col-4">
+                    <div class="features-img">
+                        <img src="assets/images/museb.jpg" >
+                    </div>
+                    <div class="features-details">
+                        <h4>Laila Museum</h4>
+                        <p>Laila Museum is a captivating destination for history and art enthusiasts.
+                          This renowned museum allows visitors to delve into the rich tapestry of human civilization.
+                          From ancient artifacts to exquisite works of art, 
+                          </p>
+                        
+                    </div>
+                    
+                </div>           
+
+                <div class="col-4">
+                    <div class="features-img">
+                        <img src="assets/images/quad.jpg" />
+                    </div>
+                    <div class="features-details">
+                        <h4>Quad bike racing ground</h4>
+                            <p>Quad bike racing is an exhilarating adventure that combines speed, skill and off-road excitement.
+                              Riding a quad bike provides an adrenaline rush like no other, as you conquer obstacles
+                              and immerse yourself in the thrilling experience of racing. It is so refreshing and addictive.
+                            </p>
+                            
+                        </div>
+                    </div>           
+                </div>
+        </div>
+    </section>
+              <div class="footer-bottom">
+                <nav class="navbar" data-navbar>
+                  <ul class="navbar-list">
+                    <li>
+                      <a href="https://www.facebook.com/profile.php?id=100080302051965" class="social-link">
+                        <ion-icon name="logo-facebook"></ion-icon>
+                      </a>
+                    </li>
+            
+                    <li>
+                      <a href="https://www.instagram.com/ekc_jr/" class="social-link">
+                        <ion-icon name="logo-instagram"></ion-icon>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="home.html" class="navbar-link" data-nav-link>Home</a>
+                    </li>
+          
+                    <li>
+                      <a href="features.html" class="navbar-link" data-nav-link>Features</a>
+                    </li>
+          
+                    <li>
+                      <a href="local-attractions-page.html" class="navbar-link" data-nav-link>Local Attractions</a>
+                    </li>
+          
+                    <li>
+                      <a href="pitches.html" class="navbar-link" data-nav-link>Pitches</a>
+                    </li>
+          
+                    <li>
+                      <a href="reviews-page.html" class="navbar-link" data-nav-link>Review</a>
+                    </li>
+          
+                    <li>
+                        <a href="information.html" class="active" data-nav-link>Information</a>
+                    </li>
+          
+                    <li>
+                      <a href="contact-us-page.html" class="navbar-link" data-nav-link>Contact Us</a>
+                    </li>
+                  </ul>
+                </nav>
+                <div class="container">
+                  <p class="copyright">
+                  GWSC Copyright &copy; 2023 created by Ekc Jr. All rights reserved.
+                  </p>
+          
+                  <ul class="footer-bottom-list">
+                    <li>
+                      <a href="#" class="footer-bottom-link">Privacy Policy</a>
+                    </li>
+          
+                    <li>
+                      <a href="#" class="footer-bottom-link">Term & Condition</a>
+                    </li>
+          
+                    <li>
+                      <a href="#" class="footer-bottom-link">FAQ</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+          
+            </footer>
+            <!-- -Quick way to go to the top of the webpage -->
+            <a href="#top" class="go-top" data-go-top>
+              <ion-icon name="arrow-up-outline"></ion-icon>
+            </a>
+            <!-- 
+              - custom js link
+            -->
+            <script src="./assets/js/script.js"></script>
+            <!-- 
+              - ionicon link
+            -->
+            <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+            <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

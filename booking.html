@@ -1,0 +1,199 @@
+<?php
+session_start(); 
+include "db_conn.php";
+// Check if form submitted
+if (isset($_POST['book'])) {
+  // Get form data
+  $site = $_POST['site'];
+  $pitch = $_POST['pitch'];
+  $no_of_people = $_POST['no_of_people'];
+  $check_in_date = $_POST['check_in_date'];
+  $check_out_date = $_POST['check_out_date'];
+  
+  // Validate form data
+  if (empty($site) || empty($pitch)|| empty($no_of_people) || empty($check_in_date) || empty($check_out_date)) {
+    $msg = "Please fill in all fields.";
+    header("Location: booking.html?msg=$msg");
+  } else {
+    
+    // Prepare and execute SQL statement to check availability
+    $stmt = $conn->prepare("SELECT COUNT(*) AS count FROM bookings WHERE site = ? AND pitch = ? AND check_in_date = ? AND check_out_date = ? AND check_in_date = ?");
+    $stmt->bind_param("sssss", $site, $pitch, $check_out_date, $check_in_date, $check_in_date);
+    $stmt->execute();
+    
+    // Get the result of the SQL statement
+    $result = $stmt->get_result();
+    
+    // Fetch the row from the result
+    $row = $result->fetch_assoc();
+    
+    // Check if the count is greater than 0
+    if ($row['count'] > 0) {
+      $msg="Sorry, the check-in date you selected is already booked for $site - $pitch.";
+      header("Location: booking.html?msg=$msg");
+    } else {
+      
+      // Prepare and execute SQL statement to insert booking
+      $stmt = $conn->prepare("INSERT INTO bookings (site, pitch, no_of_people, check_in_date, check_out_date) VALUES (?, ?, ?, ?, ?)");
+      $stmt->bind_param("sssss", $site, $pitch, $no_of_people, $check_in_date, $check_out_date);
+      $stmt->execute();
+      
+      // Check if booking was successful
+      if ($stmt->affected_rows > 0) {
+        $msg= "Booking successful for $site - $pitch!";
+        header("Location: booking.html?msg=$msg");
+      } else {
+        $msg= "Booking failed. Please try again.";
+        header("Location: booking.html?msg=$msg");
+      }
+      
+      // Close the database connection
+      $stmt->close();
+    }
+    
+    // Close the database connection
+    $conn->close();
+  }
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Form</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Booking form</h1>
+    <section class="pitch-booking" id="booking">
+        
+        <div class="container">
+            
+          <form method="post" action="pitches.html">
+            <?php if(isset($_GET['msg'])) { ?>
+              <p class="msg"><?php echo $_GET['msg']; ?></p>
+            <?php  } ?>
+            <div class="pbs">
+                
+              <label for="site" class="label">Site</label>
+              <select name="site" id="site" class="form-control">
+                <option value="Adventure City">Adventure City</option>
+                <option value="Kalimba Farms">Kalimba Farms</option>
+                <option value="Monkey Pools">Monkey Pools</option>
+              </select>
+            </div>
+            <div class="pbs">
+              <label for="pitch" class="label">Pitch</label>
+              <select name="pitch" id="pitch" class="form-control">
+                <option value="Eureka Tent">Eureka Tent</option>
+                <option value="Mori Motorhome">Mori Motorhome</option>
+                <option value="Nkobo Caravan">Nkobo Caravan</option>
+              </select>
+            </div>
+            <div class="pbs">
+              <label for="people" class="label">Number of People</label>
+              <input type="number" name="no_of_people" id="people" required placeholder="No.of People" min="1" class="form-control">
+            </div>
+            <div class="pbs">
+              <label for="checkin" class="label">Check-in Date</label>
+              <input type="date" name="check_in_date" id="checkin" required class="form-control">
+            </div>
+            <div class="pbs">
+              <label for="checkout" class="label">Check-out Date</label>
+              <input type="date" name="check_out_date" id="checkout" required class="form-control">
+            </div>
+            <?php
+            if (isset($_SESSION['u_id']) || isset($_SESSION['user_name'])) {
+              echo '
+              <button type="submit" name="book" class="btn btn-primary">Submit</button>
+              ';
+          } else {
+              echo '<p class="ntha">You must<a href="sign-up.html"> sign up </a> to create a booking.</p>';
+          }
+          ?>
+           
+          </form>
+        </div>
+      </section>
+        <div class="footer-bottom">
+          <nav class="navbar" data-navbar>
+            <ul class="navbar-list">
+              <li>
+                <a href="https://www.facebook.com/profile.php?id=100080302051965" class="social-link">
+                  <ion-icon name="logo-facebook"></ion-icon>
+                </a>
+              </li>
+      
+              <li>
+                <a href="https://www.instagram.com/ekc_jr/" class="social-link">
+                  <ion-icon name="logo-instagram"></ion-icon>
+                </a>
+              </li>
+              <li>
+                <a href="home.html" class="navbar-link" data-nav-link>Home</a>
+              </li>
+    
+              <li>
+                <a href="features.html" class="navbar-link" data-nav-link>Features</a>
+              </li>
+    
+              <li>
+                <a href="local-attractions-page.html" class="navbar-link" data-nav-link>Local Attribution</a>
+              </li>
+    
+              <li>
+                <a href="pitches.html" class="navbar-link" data-nav-link>Pitches</a>
+              </li>
+    
+              <li>
+                <a href="reviews-page.html" class="navbar-link" data-nav-link>Review</a>
+              </li>
+    
+              <li>
+                <a href="information.html" class="navbar-link" data-nav-link>Information</a>
+              </li>
+    
+              <li>
+                <a href="contact-us-page.html" class="navbar-link" data-nav-link>Contact Us</a>
+              </li>
+            </ul>
+          </nav>
+          <div class="container">
+            <p class="copyright">
+            GWSC Copyright &copy; 2023 created by Ekc Jr. All rights reserved.
+            </p>
+    
+            <ul class="footer-bottom-list">
+              <li>
+                <a href="#" class="footer-bottom-link">Privacy Policy</a>
+              </li>
+    
+              <li>
+                <a href="#" class="footer-bottom-link">Term & Condition</a>
+              </li>
+    
+              <li>
+                <a href="#" class="footer-bottom-link">FAQ</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+    
+      </footer>
+      <!-- -Quick way to go to the top of the webpage -->
+      <a href="#top" class="go-top" data-go-top>
+        <ion-icon name="arrow-up-outline"></ion-icon>
+      </a>
+      <!-- 
+        - custom js link
+      -->
+      <script src="./assets/js/script.js"></script>
+      <!-- 
+        - ionicon link
+      -->
+      <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+      <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

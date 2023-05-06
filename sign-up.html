@@ -1,0 +1,144 @@
+<?php
+session_start();
+include "db_conn.php";
+$msg=" ";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (empty($_POST['fname'])) {
+        $msg = 'First name is required';
+        header("Location: sign-up.html?msg=$msg");
+    } else {
+        $fname = trim($_POST['fname']);
+    }
+    
+    if (empty($_POST['lname'])) {
+        $msg = 'Last name is required';
+        header("Location: sign-up.html?msg=$msg");
+    } else {
+        $lname = trim($_POST['lname']);
+    }
+    
+    if (empty($_POST['email'])) {
+        $msg = 'Email is required';
+        header("Location: sign-up.html?msg=$msg");
+    } else {
+        $email = trim($_POST['email']);
+    }
+    
+    if (empty($_POST['username'])) {
+        $msg = 'Username is required';
+        header("Location: sign-up.html?msg=$msg");
+    } else {
+        $username = trim($_POST['username']);
+    }
+    
+    if (empty($_POST['gender'])) {
+        $msg = 'Gender is required';
+        header("Location: sign-up.html?msg=$msg");
+    } else {
+        $gender = trim($_POST['gender']);
+    }
+    
+    if (empty($_POST['password'])) {
+        $msg = 'Password is required';
+        header("Location: sign-up.html?msg=$msg");
+    } else {
+        $password = trim($_POST['password']);
+    }
+    
+    if ($_POST['confirmpassword'] !== $_POST['password']) {
+        $msg = 'Confirm Password is required';
+        header("Location: sign-up.html?msg=$msg");
+    } else {
+        $confirmpassword = trim($_POST['confirmpassword']);
+    }
+    
+    // Check if the username already exists in the database
+    $check_username_sql = "SELECT * FROM users WHERE user_name = '$username'";
+    $check_username_result = mysqli_query($conn, $check_username_sql);
+
+    if (mysqli_num_rows($check_username_result) > 0) {
+        $msg = "Username already exists. Please choose a different username.";
+        header("Location: sign-up.html?msg=$msg");
+    } else {
+        $stmt = $conn->prepare("INSERT INTO users (user_name, email, firstname, lastname, Gender, password) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssss", $username, $email, $fname, $lname, $gender, $password);
+
+        // set parameters and execute
+        $stmt->execute();
+
+        // check for errors
+        if ($stmt->error) {
+            die("Error Occured: " . $stmt->error);
+        }
+
+        $msg = "Account created successfully.";
+        header("Location: sign-up.html?msg=$msg");
+
+        // close statement and connection
+        $stmt->close();
+        $conn->close();
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign up</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <section class="Sus">
+        <div class="su-container">
+            <div class="box form-box">
+                <?php if(isset($_GET['msg'])) { ?>
+                    <div class="msg"><?php 
+                      echo $_GET['msg']; ?></div>
+                <?php } ?>
+                <form action="" method="post" class="fs">
+                    <div class="field input">
+                        <label for="Fname">Firstname</label>
+                        <input type="text" name="fname" id="F" placeholder="Firstname" autocomplete="off" required>
+                    </div>
+                    <div class="field input">
+                        <label for="Lname">Lastname</label>
+                        <input type="text" name="lname" id="L" placeholder="Lastname" autocomplete="off" required>
+                    </div>
+                    <div class="field input">
+                        <label for="Gender">Gender</label>
+                        <select name="gender" id=" gender">
+                        <option value="" disabled selected>Select gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        </select>
+                    </div>
+                    <div class="field input">
+                        <label for="email">Email</label>
+                        <input type="text" name="email" id="email" placeholder="Email" autocomplete="off" required>
+                    </div>
+                    <div class="field input">
+                        <label for="username">Username</label>
+                        <input type="text" name="username" id="username" placeholder="Username" autocomplete="off" required>
+                    </div>
+                    <div class="field input">
+                        <label for="password">Password</label>
+                        <input type="password" name="password" id="password" placeholder="Password" autocomplete="off" required>
+                    </div>
+                    <div class="field input">
+                        <label for="confirmpassword">Confirm Password</label>
+                        <input type="password" name="confirmpassword" id="confrimpassword" placeholder="Confirm Password" autocomplete="off" required>
+                    </div>
+                    <a href="home.html"> Already have an account?</a>
+                    <div class="field">
+                        <input type="submit" class="butn" name="submit" value="Sign Up" required>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,336 @@
+<?php
+session_start(); 
+include "db_conn.php";
+
+// Insert the review into the database
+if(isset($_POST['name'])) {
+    $name = $_POST['name'];
+    $site = $_POST['site'];
+    $pitch = $_POST['pitch'];
+    $rating = $_POST['rating'];
+    $comment = $_POST['comment'];
+    $created_at = date('Y-m-d H:i:s'); // get the current date and time
+
+    $sql = "INSERT INTO reviews (name, site, pitch, rating, comment, created_at) VALUES ('$name', '$site', '$pitch', '$rating', '$comment', '$created_at')";
+    $conn->query($sql);
+}
+
+$conn->close();
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reviews</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <section>
+  <header class="header" data-header>
+    <div class="overlay" data-overlay></div>
+        <div class="header-top">
+          <div class="container">
+            <a href="tel:+02223456790" class="helpline-box">
+              <div class="icon-box">
+                <ion-icon name="call-outline"></ion-icon>
+              </div>
+                  <div class="wrapper">
+                    <p class="helpline-title">For Further Inquires :</p>
+                    <p class="helpline-number">+02 (223) 4567 90</p>
+                  </div>
+            </a>
+                <a href="#" class="logo">
+                  <p class="logo">Global World Swimming & Camping</p>
+                </a>
+                <div class="header-btn-group">
+                  <div class="input-wrapper">
+                    <input class="input-field" type="text" id="search" name="search" placeholder="Type your search here">
+                </div>
+                <div>
+                  <button class="Search-btn" id="sib" aria-label="Search">
+                    <ion-icon name="search"></ion-icon>
+                  </button>
+                  <button class="nav-open-btn" aria-label="Open Menu" data-nav-open-btn>
+                    <ion-icon name="menu-outline"></ion-icon>
+                  </button>
+                </div>
+              </div>
+          </div>
+
+            <div class="header-bottom">
+              <div class="container">
+                <nav class="navbar" data-navbar>
+                  <div class="navbar-top">
+                    <a href="#" class="logo">
+                      <p class="logo">Global World Swimming & Camping</p>
+                    </a>
+                    <button class="nav-close-btn" aria-label="Close Menu" data-nav-close-btn>
+                      <ion-icon name="close-outline"></ion-icon>
+                    </button>
+                  </div>
+                  <ul class="navbar-list">
+                    <li>
+                      <a href="home.html" class="navbar-link" data-nav-link>Home</a>
+                    </li>
+
+                    <li>
+                      <a href="features.html" class="navbar-link" data-nav-link>Features</a>
+                    </li>
+
+                    <li>
+                      <a href="#destination" class="navbar-link" data-nav-link>Local Attribution</a>
+                    </li>
+
+                    <li>
+                      <a href="#package" class="navbar-link" data-nav-link>Pitches</a>
+                    </li>
+
+                    <li>
+                      <a href="reviews-page.html" class="active" data-nav-link>Review</a>
+                    </li>
+
+                    <li>
+                      <a href="information.html" class="navbar-link" data-nav-link>Information</a>
+                    </li>
+
+                    <li>
+                      <a href="contact-us-page.html" class="navbar-link" data-nav-link>Contact Us</a>
+                    </li>
+                    <?php if(isset($_SESSION['u_id'])) { ?>
+                      <a href="logout.html"><button class="btn btn-primary" id="logoutbtn" >Logout</button></a>
+                  <?php } else { ?>
+                      <button class="btn btn-primary" id="loginbtn" href="#">Login/Sign up</button>
+                  <?php } ?>
+              </li>
+              <?php
+                        if(isset($_SESSION['u_id'])){ ?>
+                          <p class="name-text"><?php echo $_SESSION['firstname'];
+                          } 
+                         ?>
+                          </p>
+                  </ul>
+                </nav>
+          </div>
+        </div>
+  </header>
+  </section>
+   <!-- Login form-->
+
+   <div class="login-form">
+    <form action="">
+        <button id="closeloginform"aria-label="Close Menu" data-nav-close-btn>
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+        <div class="login-main">
+
+            <div class="form-content">
+                <h1 class="loginhead"> <i class="fas fa-user"></i> User Login</h1>
+                <input type="username" placeholder="Username" id="user">
+                <input type="password" placeholder="Password" name="" id="pass">
+                <button class="lb">Login</button>
+                <p class="s-link">Don't have an account?
+                <a class="register" href="sign-up.html">Sign up </a>
+              </p>
+            </div>
+
+        </div>
+    </form>
+  </div>
+  <section class="site-reviews">
+    <form method="post" action="reviews-page.html" class="site-reviews-form">
+      <div class="form-group">
+        <label class="form-label">Name:</label>
+        <input type="text" name="name" required placeholder="Enter your name" class="form-input">
+      </div>
+  
+      <div class="form-group">
+        <label class="form-label">Site:</label>
+        <select name="site" id="site" class="form-select">
+          <option value="Kalimba Farms">Kalimba Farms</option>
+          <option value="Monkey Pools">Monkey Pools</option>
+          <option value="Adventure City">Adventure City</option>
+        </select>
+      </div>
+  
+      <div class="form-group">
+        <label class="form-label">Pitch:</label>
+        <select name="pitch" id="pitch" class="form-select">
+          <option value="Mori Motorhome">Mori Motorhome</option>
+          <option value="Eureka Tent">Eureka Tent</option>
+          <option value="Nkobo Caravan">Nkobo Caravan</option>
+        </select>
+      </div>
+  
+      <div class="form-group">
+        <label class="form-label">Rating:</label>
+        <select name="rating" required class="form-select">
+          <option value="" disabled selected>Select a rating</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
+  
+      <div class="form-group">
+        <label class="form-label">Review:</label>
+        <textarea name="comment" required placeholder="Enter your review" class="form-textarea"></textarea>
+      </div>
+      <?php
+      if (isset($_SESSION['u_id']) || isset($_SESSION['user_name'])) {
+        echo '
+        <button type="submit" class="form-button">Submit</button>
+        </div>';
+    } else {
+        echo '<p class="ntha">You must<a href="sign-up.html"> sign up </a> to leave a review.</p>';
+    }
+    ?>
+  </div>
+    </form>
+  </section>
+    <?php
+include "db_conn.php";
+$sql = "SELECT * FROM reviews ORDER BY created_at DESC";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    echo "<div class='reviews-container'>";
+    echo "<h2 class='reviews-title'>Reviews</h2>";
+    echo "<div class='reviews-list'>";
+    while($row = $result->fetch_assoc()) {
+        echo "<div class='review'>";
+        echo "<h3 class='review-name'>" . $row["name"] . "</h3>";
+        echo "<div class='review-details'>";
+        echo "<p class='review-site'>" . $row["site"] . "</p>";
+        echo "<p class='review-pitch'>" . $row["pitch"] . "</p>";
+        echo "<p class='review-rating'>" . $row["rating"] . "</p>";
+        echo "<p class='review-comment'>" . $row["comment"] . "</p>";
+        echo "<p class='review-date'>" . $row["created_at"] . "</p>";
+        echo "</div>"; // end .review-details
+        echo "</div>"; // end .review
+    }
+    echo "</div>"; // end .reviews-list
+    echo "</div>"; // end .reviews-container
+}
+
+
+// Display pagination links
+echo "<div class='pagination'>";
+    
+// Get the current page number
+$page = isset($_GET['page']) ? $_GET['page'] : 1;
+
+// Calculate the offset
+$offset = ($page - 1) * 5;
+
+// Get the reviews for the current page
+$sql = "SELECT * FROM reviews ORDER BY created_at DESC LIMIT 5 OFFSET $offset";
+$result = $conn->query($sql);
+
+// Calculate the total number of pages
+$sql = "SELECT COUNT(*) AS count FROM reviews";
+$result = $conn->query($sql);
+$row = $result->fetch_assoc();
+$total_pages = ceil($row['count'] / 5);
+
+// Display the pagination links
+echo "<div>";
+for ($i = 1; $i <= $total_pages; $i++) {
+    if ($i == $page) {
+        echo "<span class='current'>$i</span>";
+    } else {
+        echo "<a href=\"reviews-page.html?page=$i\">$i</a>";
+    }
+}
+echo "</div>";
+
+echo "</div>";
+
+$conn->close();
+?>
+</section>
+      <div class="footer-bottom">
+        <nav class="navbar" data-navbar>
+          <ul class="navbar-list">
+            <li>
+              <a href="https://www.facebook.com/profile.php?id=100080302051965" class="social-link">
+                <ion-icon name="logo-facebook"></ion-icon>
+              </a>
+            </li>
+    
+            <li>
+              <a href="https://www.instagram.com/ekc_jr/" class="social-link">
+                <ion-icon name="logo-instagram"></ion-icon>
+              </a>
+            </li>
+            <li>
+              <a href="home.html" class="navbar-link" data-nav-link>Home</a>
+            </li>
+  
+            <li>
+              <a href="features.html" class="navbar-link" data-nav-link>Features</a>
+            </li>
+  
+            <li>
+              <a href="local-attractions-page.html" class="navbar-link" data-nav-link>Local Attribution</a>
+            </li>
+  
+            <li>
+              <a href="pitches.html" class="navbar-link" data-nav-link>Pitches</a>
+            </li>
+  
+            <li>
+              <a href="reviews-page.html" class="active" data-nav-link>Review</a>
+            </li>
+  
+            <li>
+              <a href="information.html" class="navbar-link" data-nav-link>Information</a>
+            </li>
+  
+            <li>
+              <a href="contact-us-page.html" class="navbar-link" data-nav-link>Contact Us</a>
+            </li>
+          </ul>
+        </nav>
+        <div class="container">
+          <p class="copyright">
+          GWSC Copyright &copy; 2023 created by Ekc Jr. All rights reserved.
+          </p>
+  
+          <ul class="footer-bottom-list">
+            <li>
+              <a href="#" class="footer-bottom-link">Privacy Policy</a>
+            </li>
+  
+            <li>
+              <a href="#" class="footer-bottom-link">Term & Condition</a>
+            </li>
+  
+            <li>
+              <a href="#" class="footer-bottom-link">FAQ</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+  
+    </footer>
+    <!-- -Quick way to go to the top of the webpage -->
+    <a href="#top" class="go-top" data-go-top>
+      <ion-icon name="arrow-up-outline"></ion-icon>
+    </a>
+    <!-- 
+      - custom js link
+    -->
+    <script src="./assets/js/script.js"></script>
+    <!-- 
+      - ionicon link
+    -->
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+</body>
+</html>
+

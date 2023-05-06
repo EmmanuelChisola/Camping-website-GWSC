@@ -1,0 +1,788 @@
+<?php 
+session_start(); 
+include "db_conn.php";
+$msg = "";
+
+// Check if the user has exceeded the maximum number of login attempts
+if (isset($_SESSION['login_attempts']) && $_SESSION['login_attempts'] == 3 && isset($_SESSION['last_attempt'])) {
+    $last_attempt = $_SESSION['last_attempt'];
+    $elapsed_time = time() - $last_attempt;
+    $remaining_time = 60 - $elapsed_time; // 1 minute in seconds
+
+    if ($remaining_time > 0) {
+        // The user is still locked out, redirect to an error page
+        $msg = "Your account is temporarily locked. Please try again after $remaining_time seconds.";
+        header("Location: home.html?msg=" . urlencode($msg));
+        exit();
+    } else {
+        // The lockout period has expired, reset the session variables
+        unset($_SESSION['login_attempts']);
+        unset($_SESSION['last_attempt']);
+    }
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    function validate($data) {
+        $data = trim($data);
+        $data = stripslashes($data);
+        $data = htmlspecialchars($data);
+        return $data;
+    }
+
+    $username = validate($_POST['username']);
+    $password = validate($_POST['password']);
+
+    if (empty($username)) {
+        $msg = "Insert username.";
+        header("Location: home.html?msg=" . urlencode($msg));
+        exit();
+    } else if (empty($password)) {
+        $msg = "Insert password.";
+        header("Location: home.html?msg=" . urlencode($msg));
+        exit();
+    } else {
+        $sql = "SELECT * FROM users WHERE user_name='$username' AND password='$password'";
+
+        $result = mysqli_query($conn, $sql);
+
+        if (mysqli_num_rows($result) === 1) {
+            $row = mysqli_fetch_assoc($result);
+            if ($row['user_name'] === $username && $row['password'] === $password) {
+                // Reset login attempts counter and last attempt timestamp
+                unset($_SESSION['login_attempts']);
+                unset($_SESSION['last_attempt']);
+
+                // Set the user's session variables
+                $_SESSION['user_name'] = $row['user_name'];
+                $_SESSION['firstname'] = $row['firstname'];
+                $_SESSION['u_id'] = $row['u_id'];
+
+                header("Location: home.html");
+                exit();
+            }
+            } else {
+                // The login was unsuccessful, increment the login attempts counter
+                if (!isset($_SESSION['login_attempts'])) {
+                    $_SESSION['login_attempts'] = 1;
+                } else {
+                    $_SESSION['login_attempts']++;
+                }
+
+                // Update the timestamp of the last attempt
+                $_SESSION['last_attempt'] = time();
+
+                // Display an error message
+                $remaining_attempts = 3 - $_SESSION['login_attempts'];
+                $msg = "Incorrect username or password. You have $remaining_attempts attempts remaining.";
+                header("Location: home.html?msg=" . urlencode($msg));
+                exit();
+
+            // The login was unsuccessful, increment the login attempts counter
+            if (!isset($_SESSION['login_attempts'])) {
+                $_SESSION['login_attempts'] = 1;
+            } else {
+                $_SESSION['login_attempts']++;
+            }
+
+            // Update the timestamp of the last attempt
+            $_SESSION['last_attempt'] = time();
+
+            // Display an error message
+            $remaining_attempts = 3 - $_SESSION['login_attempts'];
+            if ($remaining_attempts ==3 - $_SESSION['login_attempts']);
+                $msg = "Incorrect username or password. You have $remaining_attempts attempts remaining.";
+                header("Location: home.html?msg=$msg");
+                exit();
+            }
+            if($remaining_attempts == 0) {
+              $msg = "You have exceeded the maximum number of login attempts. Please try again after 1 minute.";
+              header("Location: home.html");
+            } else {
+                // The lockout period has expired, reset the session variables
+                unset($_SESSION['login_attempts']);
+                unset($_SESSION['last_attempt']);
+            }
+              $msg = "Incorrect username or password. You have $remaining_attempts attempts remaining.";
+              header("Location: home.html?msg=$msg");
+          }
+          
+           
+        }
+?>
+  
+
+<?php
+    if(isset($_SESSION['views'])){
+        $_SESSION['views'] = $_SESSION['views']+ 1;
+    } else {
+        $_SESSION['views'] = 1;
+    }
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Global World Swimming & Camping</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="fontawesome-free-5.15.3-web/css/all.min.css">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+</head>
+
+<body id="top">
+  <!-- 
+    - #HEADER
+  -->
+  
+  <header class="header" data-header>
+    <div class="overlay" data-overlay></div>
+      
+        <div class="header-top">
+          <div class="container">
+            <a href="tel:+02223456790" class="helpline-box">
+              <div class="icon-box">
+                <ion-icon name="call-outline"></ion-icon>
+              </div>
+                  <div class="wrapper">
+                    <p class="helpline-title">For Further Inquires :</p>
+                    <p class="helpline-number">+02 (223) 4567 90</p>
+                  </div>
+            </a>
+                <a href="#" class="logo">
+                  <p class="logo">Global World Swimming & Camping</p>
+                </a>
+                <div class="header-btn-group">
+                  <div class="input-wrapper">
+                    <input class="input-field" type="text" id="search" name="search" placeholder="Type your search here">
+                </div>
+                <div>
+                  <button class="Search-btn" id="sib" aria-label="Search">
+                    <ion-icon name="search"></ion-icon>
+                  </button>
+                </div> 
+                  <button class="nav-open-btn" aria-label="Open Menu" data-nav-open-btn>
+                    <ion-icon name="menu-outline"></ion-icon>
+                  </button>
+                </div>
+              </div>
+          </div>
+
+            <div class="header-bottom">
+              <div class="container">
+                <nav class="navbar" data-navbar>
+                  <div class="navbar-top">
+                    <a href="#" class="logo">
+                      <p class="logo">Global World Swimming & Camping</p>
+                    </a>
+                    <button class="nav-close-btn" aria-label="Close Menu" data-nav-close-btn>
+                      <ion-icon name="close-outline"></ion-icon>
+                    </button>
+                  </div>
+                  <ul class="navbar-list">
+                    <li>
+                      <a href="home.html" class="active" data-nav-link>Home</a>
+                    </li>
+
+                    <li>
+                      <a href="features.html" class="navbar-link" data-nav-link>Features</a>
+                    </li>
+
+                    <li>
+                      <a href="local-attractions-page.html" class="navbar-link" data-nav-link>Local Attribution</a>
+                    </li>
+
+                    <li>
+                      <a href="pitches.html" class="navbar-link" data-nav-link>Pitches</a>
+                    </li>
+
+                    <li>
+                      <a href="reviews-page.html" class="navbar-link" data-nav-link>Review</a>
+                    </li>
+
+                    <li>
+                      <a href="information.html" class="navbar-link" data-nav-link>Information</a>
+                    </li>
+
+                    <li>
+                      <a href="contact-us-page.html" class="navbar-link" data-nav-link>Contact Us</a>
+                    </li>
+                    <?php if(isset($_SESSION['u_id'])) { ?>
+                      <a href="logout.html"><button class="btn btn-primary" id="logoutbtn" >Logout</button></a>
+                  <?php } else { ?>
+                      <button class="btn btn-primary" id="loginbtn" href="#">Login/Sign up</button>
+                  <?php } ?>
+              </li>
+              <?php
+                        if(isset($_SESSION['u_id'])){ ?>
+                          <p class="name-text"><?php echo $_SESSION['firstname'];
+                          } 
+                         ?>
+                          </p>
+                  </ul>
+                </nav>
+          </div>
+        </div>
+  </header>
+          <!-- Login form-->
+
+          <div class="login-form">
+            <form action=""method="POST">
+                <button id="closeloginform"aria-label="Close Menu" data-nav-close-btn>
+                  <ion-icon name="close-outline"></ion-icon>
+                </button>
+                <div class="login-main">
+
+                    <div class="form-content">
+                        <h1 class="loginhead"> <i class="fas fa-user"></i> User Login</h1>
+                        <?php if(isset($_GET['msg'])) { ?>
+                          <div class="msg"><?php 
+                            echo $_GET['msg']; ?></div>
+                      <?php } ?>
+                        <input type="username" placeholder="Username" name="username">
+                        <input type="password" placeholder="Password" name="password">
+                        <button class="lb">Login</button>
+                        <p class="s-link">Don't have an account?
+                        <a class="register" href="sign-up.html">Sign up </a>
+                      </p>
+                    </div>
+
+                </div>
+            </form>
+          </div>
+     
+          <main>
+            <article>
+              <section id="psection">
+                <div class="Slides">
+                    <div class="Slideshow">
+                </div>
+              <section class="intro" id="home">
+                  <div class="container">
+                      <h2 class="h1 intro-title">Global World Swimming & Camping</h2>
+
+                      <p class="intro-text">
+                        We are are passionate about seeing people have an awesome time with us.
+                        We have cozy places that allow social gathering for friends and family.<br>
+                      </p>
+
+                      <div class="intro-btn">
+                        <button class="btn btn-primary">Learn more</button>
+                        <a href="booking.html"><button class="btn btn-secondary">Book now</button></a>
+                      </div>
+                  </div>
+                </div>
+      </section>
+      <!-- Site SEARCH-->
+  </section>
+     
+
+      <!--POPULAR-->
+      <section class="popular" id="destination">
+        <div class="container">
+
+          <p class="section-subtitle">Pitches within Lusaka</p>
+
+          <h2 class="h2 section-title"> Our Pitches</h2>
+
+          <p class="section-text">
+            All our pitches provide a comfortable and enjoyable camping experience. 
+            Whether you prefer the simplicity of tent camping or the convenience of caravans or motorhomes,
+            our campsites offer suitable pitches. Please note that availability may vary.
+          </p>
+
+          <ul class="popular-list">
+            <li>
+              <div class="popular-card">
+                <figure class="card-img">
+                  <img src="./assets/images/mh.jpg" alt="Mori Motorhome" loading="lazy">
+                </figure>
+
+                <div class="card-content">
+                  <p class="card-subtitle">
+                    <a href="#">Lusaka West</a>
+                  </p>
+
+                  <h3 class="h3 card-title">
+                    <a href="#">Mori Motorhome</a>
+                  </h3>
+                 <a href="booking.html"><button class="btn btn-primary">Check availability</button></a>
+                </div>
+
+              </div>
+            </li>
+
+            <li>
+              <div class="popular-card">
+
+                <figure class="card-img">
+                  <img src="./assets/images/te.jpg" alt="Eureka Tent" loading="lazy">
+                </figure>
+
+                <div class="card-content">
+                  <p class="card-subtitle">
+                    <a href="#">Lilayi</a>
+                  </p>
+
+                  <h3 class="h3 card-title">
+                    <a href="#">Eureka Tent pitch</a>
+                  </h3>
+                  <a href="booking.html"><button class="btn btn-primary">Check availability</button></a>
+                </div>
+
+              </div>
+            </li>
+
+            <li>
+              <div class="popular-card">
+                <figure class="card-img">
+                  <img src="./assets/images/cavan.jpg" alt="Nkobo Caravan" loading="lazy">
+                </figure>
+
+                <div class="card-content">
+
+                  <p class="card-subtitle">
+                    <a href="#">RhodesPark</a>
+                  </p>
+
+                  <h3 class="h3 card-title">
+                    <a href="#">Nkobo Caravan</a>
+                  </h3>
+                  <a href="booking.html"><button class="btn btn-primary">Check availability</button></a>
+                </div>
+
+              </div>
+            </li>
+
+          </ul>
+
+         
+
+        </div>
+      </section>
+      <!-- 
+        - #PACKAGE
+      -->
+      
+        <section class="package" id="package">
+          <div class="container">
+  
+            <p class="section-subtitle">All Our Sites</p>
+  
+            <h2 class="h2 section-title">Checkout Our Sites</h2>
+  
+            <p class="section-text">
+              Fusce hic augue velit wisi quibusdam pariatur, iusto primis, nec nemo, rutrum. Vestibulum cumque laudantium.
+              Sit ornare
+              mollitia tenetur, aptent.
+            </p>
+  
+            <ul class="package-list">
+  
+              <li>
+                <div class="package-card">
+  
+                  <figure class="card-banner">
+                    <img src="./assets/images/Kalimba.jpg" alt="Experience The Great Holiday at Kalimba Farms" loading="lazy">
+                  </figure>
+  
+                  <div class="card-content">
+  
+                    <h3 class="h3 card-title">Kalimba Farms</h3>
+  
+                    <p class="card-text">
+                      Laoreet, voluptatum nihil dolor esse quaerat mattis explicabo maiores, est aliquet porttitor! Eaque,
+                      cras, aspernatur.
+                    </p>
+  
+                    <ul class="card-meta-list">
+                      <li class="card-meta-item">
+                        <div class="meta-box">
+                          <ion-icon name="location"></ion-icon>
+  
+                          <p class="text">Lusaka</p>
+                        </div>
+                      </li>
+                      <li class="card-meta-item">
+                        <div class="meta-box">
+                          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1924.1851207639133!2d28.35982553833635!3d-15.302101509196566!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x194061c678794733%3A0x3b37978b8b26c948!2sKalimba%20Reptile%20Park!5e0!3m2!1sen!2szm!4v1682613675735!5m2!1sen!2szm" width="300" height="200" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+  
+                  <div class="card-price">
+                    <p class="price">
+                      K250
+                      <span>/ per person</span>
+                    </p>
+                    <a href="booking.html"><button class="btn btn-secondary">Book Now</button></a>
+                  </div>
+                </div>
+              </li>
+  
+              <li>
+                <div class="package-card">
+  
+                  <figure class="card-banner">
+                    <img src="./assets/images/mp.jpg" alt="Summer Holiday To The Oxolotan River" loading="lazy">
+                  </figure>
+  
+                  <div class="card-content">
+  
+                    <h3 class="h3 card-title">Monkey Pools</h3>
+  
+                    <p class="card-text">
+                      Laoreet, voluptatum nihil dolor esse quaerat mattis explicabo maiores, est aliquet porttitor! Eaque,
+                      cras, aspernatur.
+                    </p>
+  
+                    <ul class="card-meta-list">
+                      <li class="card-meta-item">
+                        <div class="meta-box">
+                          <ion-icon name="location"></ion-icon>
+  
+                          <p class="text">Lusaka</p>
+                        </div>
+                      </li>
+                      <li class="card-meta-item">
+                        <div class="meta-box">
+                          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3845.3507417019896!2d28.448846173524164!3d-15.465554785129822!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19408fdaaa1375fd%3A0x4858f0703890ea30!2sMonkey%20Pools!5e0!3m2!1sen!2szm!4v1682674872301!5m2!1sen!2szm" width="300" height="200" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+  
+                  <div class="card-price">
+                    <p class="price">
+                      K300
+                      <span>/ per person</span>
+                    </p>
+                    <a href="booking.html"><button class="btn btn-secondary">Book Now</button></a>
+  
+                  </div>
+  
+                </div>
+              </li>
+  
+              <li>
+                <div class="package-card">
+  
+                  <figure class="card-banner">
+                    <img src="./assets/images/closeup-shot-beautiful-bird-sitting-pick-up.jpg" alt="Santorini Island's Weekend Vacation" loading="lazy">
+                  </figure>
+  
+                  <div class="card-content">
+  
+                    <h3 class="h3 card-title">Andventure City</h3>
+  
+                    <p class="card-text">
+                      Laoreet, voluptatum nihil dolor esse quaerat mattis explicabo maiores, est aliquet porttitor! Eaque,
+                      cras, aspernatur.
+                    </p>
+                    <ul class="card-meta-list">
+                      <li class="card-meta-item">
+                        <div class="meta-box">
+                          <ion-icon name="location"></ion-icon>
+                          <p class="text">Lusaka</p>
+                        </div>
+                      </li>
+                      <li class="card-meta-item">
+                        <div class="meta-box">
+                          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3845.4053756912595!2d28.398932373524065!3d-15.462612285132344!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19408e0cd99af6ef%3A0xbb60af8db60452b3!2sAdventure%20City!5e0!3m2!1sen!2szm!4v1682675015913!5m2!1sen!2szm" width="300" height="200" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+  
+                  <div class="card-price">
+                    <p class="price">
+                      K420
+                      <span>/ per person</span>
+                    </p>
+  
+                    <a href="booking.html"><button class="btn btn-secondary">Book Now</button></a>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          </section>
+          <!--Features of our campsites-->
+          
+          <h2 class="h2-sec-title">Features</h2>
+          <section class="featurecontainer">
+            <a href="../Ourproducts/Ourproducts.html#Earrings" class="ftctn">
+                <img src="assets/images/free-wifi-1563024_1920.jpg" alt="">
+                <p class="featuretitle"></p>
+            </a>
+            <a href="../Ourproducts/Ourproducts.html#Brooches" class="ftctn">
+                <img src="assets/images/park.jpg" alt="">
+                <p class="festuretitle">Safe Parking</p>
+            </a>
+            <a href="../Ourproducts/Ourproducts.html#Bangles" class="ftctn">
+                <img src="assets/images/relaxing-3112750_1920.jpg" alt="">
+                <p class="featuretitle">Swimming Session</p>
+            </a>
+            <a href="" class="ftctn">
+                <img src="assets/images/playground-411362_1920.jpg" alt="">
+                <p class="featuretitle">Playing ground</p>
+            </a>
+            <a href="../JbGallery/Slides.html" class="ftctn">
+              <img src="assets/images/gt.jpg" alt="">
+              <p class="featuretitle">Guided tour</p>
+          </a>
+            <a href="../JbGallery/Slides.html" class="ftctn">
+                <img src="assets/images/shower.jpg" alt="">
+                <p class="featuretitle">Showers</p>
+            </a>
+          </div>
+    </section>
+         <!-- Rules and regulations Section -->
+    <section id="r&r">
+      <div class="r-container">
+        <div class="r-heading">
+          <h2 class="h2 section-title">Rules & Regulations</h2>
+          <p class="section-text">Our rules and regulations should be strictly followed to enable and ensure a safe, comfortable and enjoyable stay. Failure to adhere will attract...Our premises are monitored by CCTV cameras, to avoid misconduct.</p>
+          
+        </div>
+        <!-- 1 -->
+        <div class="Rules">
+          <div class="rule">
+              <p>Children below the age of 13 should be supervised as they swim.</p>
+          </div>
+             <!-- 2 -->
+          <div class="rule">
+            <p>No breaking of glass bottles or littering is allowed on the premises.</p>
+          </div>
+          <!-- 3 -->
+          <div class="rule">
+            <p>By no means should the animals be given food or porched as food.</p>
+          </div>
+          <!-- service 4 -->
+          <div class="rule">
+            <p>Any malfunction or incident that needs the attention of management should be reported as soon as possible.</p>
+          </div>
+      </div>  
+  </section>
+      <!--Gallery-->
+      <section class="gallery" id="gallery">
+        <div class="container">
+
+          <p class="section-subtitle">Photo Gallery</p>
+
+          <h2 class="h2 section-title">Photo's taken by Campers</h2>
+
+          <p class="section-text">
+            What a place to visit with awesome vibes and joy.
+          </p>
+          <ul class="gallery-list">
+
+            <li class="gallery-item">
+              <figure class="gallery-image">
+                <img src="./assets/images/painting.jpg" alt="Gallery image">
+              </figure>
+            </li>
+
+            <li class="gallery-item">
+              <figure class="gallery-image">
+                <img src="./assets/images/quad.jpg" alt="Gallery image">
+              </figure>
+            </li>
+
+            <li class="gallery-item">
+              <figure class="gallery-image">
+                <img src="./assets/images/gym.jpg" alt="Gallery image">
+              </figure>
+            </li>
+
+            <li class="gallery-item">
+              <figure class="gallery-image">
+                <img src="./assets/images/dog-4153418_1920.jpg" alt="Gallery image">
+              </figure>
+            </li>
+
+            <li class="gallery-item">
+              <figure class="gallery-image">
+                <img src="./assets/images/museum view.jpg" alt="Gallery image">
+              </figure>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <!-- 
+        - #CTA
+      -->
+
+      <section class="cta" id="contact">
+        <div class="container">
+
+          <div class="cta-content">
+            <p class="section-subtitle">Call To Action</p>
+
+            <h2 class="h2 section-title">Ready For An Unforgatable Experience, Give Us A Call!</h2>
+
+            <p class="section-text">
+             Lorem ipsum, dolor sit amet consectetur adipisicing elit. Officiis velit neque quos impedit, minus amet, 
+             iusto aliquid vel architecto consectetur, repellendus quasi cupiditate soluta voluptate. Delectus hic voluptatum numquam ab!
+            </p>
+          </div>
+
+          <a href="contact-us-page.html"><button class="btn btn-secondary">Contact Us!!</a></button>
+      </section>
+    </article>
+  </main>
+  <!-- 
+    - #FOOTER
+  -->
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="container">
+        <div class="footer-brand">
+
+          <a href="#" class="logo">
+            <p class="logo">Global World Swimming & Camping</p>
+          </a>
+
+          <p class="footer-text">
+            Our main aim is to create exciting experiences for people and make sure they enjoy and maximize their time and come more often.<br>
+            The sites host quite a number of events, it also teaches people how to do various activites such as swimmining.
+          </p>
+        </div>
+
+        <div class="footer-contact">
+          <h4 class="contact-title">Contact Us</h4>
+          <p class="contact-text">
+            Feel free to contact and reach us!!
+          </p>
+
+          <ul>
+            <li class="contact-item">
+              <ion-icon name="call-outline"></ion-icon>
+
+              <a href="tel:+02223456790" class="contact-link">+02 (223) 4567 90</a>
+            </li>
+
+            <li class="contact-item">
+              <ion-icon name="mail-outline"></ion-icon>
+
+              <a href="mailto:emmanuelchisola06@gmail.com" class="contact-link">globalcamping9@gmail.com</a>
+            </li>
+
+            <li class="contact-item">
+              <ion-icon name="location-outline"></ion-icon>
+
+              <address>3146 Lusaka, Zambia</address>
+            </li>
+
+          </ul>
+
+        </div>
+
+        <div class="footer-form">
+
+          <p class="form-text">
+            Subscribe to our newsletter for more update & news !!
+          </p>
+
+          <form action="" class="form-wrapper" method="POST">
+           
+            <input type="email" name="email" class="input-field" placeholder="Enter Your Email" required>
+       
+            <button type="submit" name="Subscribe" class="btn btn-secondary">Subscribe</button>
+          </form>
+         
+        </div>
+      </div>
+    </div>
+    <div class="counter">
+      <div class="head">Number of Website Views</div>
+      <div class="count"><?php echo $_SESSION['views']; ?></div>
+  </div>
+  
+
+    <div class="footer-bottom">
+      <nav class="navbar" data-navbar>
+        <ul class="navbar-list">
+          <li>
+            <a href="https://www.facebook.com/profile.php?id=100080302051965" class="social-link">
+              <ion-icon name="logo-facebook"></ion-icon>
+            </a>
+          </li>
+  
+          <li>
+            <a href="https://www.instagram.com/ekc_jr/" class="social-link">
+              <ion-icon name="logo-instagram"></ion-icon>
+            </a>
+          </li>
+          <li>
+            <a href="home.html" class="active" data-nav-link>Home</a>
+          </li>
+
+          <li>
+            <a href="features.html" class="navbar-link" data-nav-link>Features</a>
+          </li>
+
+          <li>
+            <a href="local-attractions-page.html" class="navbar-link" data-nav-link>Local Attractions</a>
+          </li>
+
+          <li>
+            <a href="pitches.html" class="navbar-link" data-nav-link>Pitches</a>
+          </li>
+
+          <li>
+            <a href="reviews-page.html" class="navbar-link" data-nav-link>Review</a>
+          </li>
+
+          <li>
+            <a href="#contact" class="navbar-link" data-nav-link>About Us</a>
+          </li>
+
+          <li>
+            <a href="contact-us-page.html" class="navbar-link" data-nav-link>Contact Us</a>
+          </li>
+        </ul>
+      </nav>
+      <div class="container">
+        <p class="copyright">
+        GWSC Copyright &copy; 2023 created by Ekc Jr. All rights reserved.
+        </p>
+
+        <ul class="footer-bottom-list">
+          <li>
+            <a href="privacy-policy.html" class="footer-bottom-link">Privacy Policy</a>
+          </li>
+
+          <li>
+            <a href="#" class="footer-bottom-link">Term & Condition</a>
+          </li>
+
+          <li>
+            <a href="#" class="footer-bottom-link">FAQ</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </footer>
+  <!-- -Quick way to go to the top of the webpage -->
+  <a href="#top" class="go-top" data-go-top>
+    <ion-icon name="arrow-up-outline"></ion-icon>
+  </a>
+  <!-- 
+    - custom js link
+  -->
+  <script src="./assets/js/script.js"></script>
+  <!-- 
+    - ionicon link
+  -->
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+</body>
+</html>
